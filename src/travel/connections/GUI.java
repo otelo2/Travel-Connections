@@ -7,6 +7,7 @@ package travel.connections;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -18,11 +19,11 @@ import javax.swing.*;
  *
  * @author admin
  */
-public class GUI extends JFrame implements ActionListener {
+public class GUI extends JFrame implements MouseListener {
 
     //Set size and position of main window
     int FRAME_WIDTH = 900;
-    int FRAME_HEIGHT = 447;
+    int FRAME_HEIGHT = 457;
     int FRAME_X_ORIGIN = 300;
     int FRAME_Y_ORIGIN = 180;
 
@@ -37,38 +38,68 @@ public class GUI extends JFrame implements ActionListener {
         contentPane = getContentPane();
         contentPane.setLayout(null);
         contentPane.setBackground(Color.black);
-
-        //Sets the map background
-        try {
-            Image backgroundImage = javax.imageio.ImageIO.read(new File("map.jpg"));
-            setContentPane(new JPanel(new BorderLayout()) {
-
-                public void paintComponent(Graphics g) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-                }
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        
+        //Adds the map background image
+        BufferedImage img = ImageIO.read(new File("map.jpg"));
+        JLabel background = new JLabel(new ImageIcon(img));
+        background.setBounds(0,0,900,447);
+        background.setOpaque(false);
+//       contentPane.add(background);
 
         //Adds the red pointer
-        Image pointer = javax.imageio.ImageIO.read(new File("pointer.png"));
+//        Image pointer = javax.imageio.ImageIO.read(new File("pointer.png"));
+        BufferedImage pointer = ImageIO.read(new File("pointer.png"));
         ImageIcon icon = new ImageIcon(pointer);
-        JLabel redThing = new JLabel();
-        redThing.setIcon(icon);
-        int posx, posy;
-        posx=posy=200;
-        redThing.setHorizontalAlignment(posx);
-        redThing.setVerticalAlignment(posy);
-        contentPane.add(redThing);
+        int pointerWidth=20;
+        int pointerHeight=30;
+        JLabel NY = new JLabel("NY");
+        NY.setIcon(icon);
+        NY.setBounds(170,95,pointerWidth,pointerHeight);
+        NY.setOpaque(false);
+        NY.addMouseListener(this);
+        JLabel MX = new JLabel("MX");
+        MX.setIcon(icon);
+        MX.setBounds(90,160,pointerWidth,pointerHeight);
+        MX.setOpaque(false);
+        MX.addMouseListener(this);
+        contentPane.add(NY);
+        contentPane.add(MX);
+        contentPane.add(background);
 
         //So it stops the program once you close the windows
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
     }
 
-    public void actionPerformed(ActionEvent arg) {
-        //yes
+
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent event) {
+//        System.out.println("Clicked on a red pointer " + event.getComponent());
+        String ans = event.getComponent().toString();
+        if(event.getComponent().toString().contains("text=NY")){
+            System.out.println("Selected New York airport.");
+        }
+        if(event.getComponent().toString().contains("text=MX")){
+            System.out.println("Selected Mexico City airport.");
+        }
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
     }
 
 }

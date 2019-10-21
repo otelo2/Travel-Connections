@@ -47,23 +47,15 @@ public class GUI extends JFrame implements MouseListener {
 //       contentPane.add(background);
 
         //Adds the red pointer
-//        Image pointer = javax.imageio.ImageIO.read(new File("pointer.png"));
-        BufferedImage pointer = ImageIO.read(new File("pointer.png"));
-        ImageIcon icon = new ImageIcon(pointer);
-        int pointerWidth=20;
-        int pointerHeight=30;
-        JLabel NY = new JLabel("NY");
-        NY.setIcon(icon);
-        NY.setBounds(170,95,pointerWidth,pointerHeight);
-        NY.setOpaque(false);
+        NavArrow NY = new NavArrow("NY",170,95);
         NY.addMouseListener(this);
-        JLabel MX = new JLabel("MX");
-        MX.setIcon(icon);
-        MX.setBounds(90,160,pointerWidth,pointerHeight);
-        MX.setOpaque(false);
+        NavArrow MX = new NavArrow("MX",90,160);
         MX.addMouseListener(this);
+        NavArrow CHI = new NavArrow("China",550,50);
+        CHI.addMouseListener(this);
         contentPane.add(NY);
         contentPane.add(MX);
+        contentPane.add(CHI);
         contentPane.add(background);
 
         //So it stops the program once you close the windows
@@ -90,6 +82,9 @@ public class GUI extends JFrame implements MouseListener {
         }
         if(event.getComponent().toString().contains("text=MX")){
             System.out.println("Selected Mexico City airport.");
+        }
+        if(event.getComponent().toString().contains("text=China")){
+            System.out.println("Selected China airport. But not really.");
         }
         
     }

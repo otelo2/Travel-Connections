@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.geom.*;
 
 /**
  *
@@ -22,10 +23,15 @@ import javax.swing.*;
 public class GUI extends JFrame implements MouseListener {
 
     //Set size and position of main window
-    int FRAME_WIDTH = 900;
+    int FRAME_WIDTH = 1200;
     int FRAME_HEIGHT = 457;
-    int FRAME_X_ORIGIN = 300;
+    int FRAME_X_ORIGIN = 110;
     int FRAME_Y_ORIGIN = 180;
+
+    boolean firstTime = true;
+    int origin, destination;
+    int locX, locY, orCoordX, orCoordY, desCoordX, desCoordY;
+    int selection = 9999;
 
     GUI() throws IOException {
         Container contentPane;
@@ -38,44 +44,46 @@ public class GUI extends JFrame implements MouseListener {
         contentPane = getContentPane();
         contentPane.setLayout(null);
         contentPane.setBackground(Color.black);
-        
+
         //Adds the map background image
         BufferedImage img = ImageIO.read(new File("map.jpg"));
         JLabel background = new JLabel(new ImageIcon(img));
-        background.setBounds(0,0,900,447);
+        background.setBounds(0, 0, 900, 447);
         background.setOpaque(false);
-//       contentPane.add(background);
+        contentPane.add(background);
+        
+        JTextArea itineraryArea;
 
         //Adds the red pointer
-        NavArrow NY = new NavArrow("New York",170,95);
+        NavArrow NY = new NavArrow("New York", 170, 95);
         NY.addMouseListener(this);
-        NavArrow FR = new NavArrow("France",366,75);
+        NavArrow FR = new NavArrow("France", 366, 75);
         FR.addMouseListener(this);
-        NavArrow AF = new NavArrow("Afganistan",530,115);
+        NavArrow AF = new NavArrow("Afganistan", 530, 115);
         AF.addMouseListener(this);
-        NavArrow AMS = new NavArrow("Amsterdam",375,60);
+        NavArrow AMS = new NavArrow("Amsterdam", 375, 60);
         AMS.addMouseListener(this);
-        NavArrow CHL = new NavArrow("Chile",173,335);
+        NavArrow CHL = new NavArrow("Chile", 173, 335);
         CHL.addMouseListener(this);
-        NavArrow RU = new NavArrow("Russia",445,40);
+        NavArrow RU = new NavArrow("Russia", 445, 40);
         RU.addMouseListener(this);
-        NavArrow CHI = new NavArrow("China",640,130);
+        NavArrow CHI = new NavArrow("China", 640, 130);
         CHI.addMouseListener(this);
-        NavArrow MAR = new NavArrow("Marruecos",344,120);
+        NavArrow MAR = new NavArrow("Marruecos", 344, 120);
         MAR.addMouseListener(this);
-        NavArrow MX = new NavArrow("Mexico",90,160);
+        NavArrow MX = new NavArrow("Mexico", 90, 160);
         MX.addMouseListener(this);
-        NavArrow HAW = new NavArrow("Hawai",13,131);
+        NavArrow HAW = new NavArrow("Hawai", 13, 131);
         HAW.addMouseListener(this);
-        NavArrow EA = new NavArrow("Emiratos Arabes",504,145);
+        NavArrow EA = new NavArrow("Emiratos Arabes", 504, 145);
         EA.addMouseListener(this);
-        NavArrow JP = new NavArrow("Japan",716,108);
+        NavArrow JP = new NavArrow("Japan", 716, 108);
         JP.addMouseListener(this);
-        NavArrow TAI = new NavArrow("Thailand",633,172);
+        NavArrow TAI = new NavArrow("Thailand", 633, 172);
         TAI.addMouseListener(this);
-        NavArrow AUS = new NavArrow("Australia",711,294);
+        NavArrow AUS = new NavArrow("Australia", 711, 294);
         AUS.addMouseListener(this);
-        NavArrow IR = new NavArrow("Ireland",343,53);
+        NavArrow IR = new NavArrow("Ireland", 343, 53);
         IR.addMouseListener(this);
         contentPane.add(NY);
         contentPane.add(FR);
@@ -92,14 +100,22 @@ public class GUI extends JFrame implements MouseListener {
         contentPane.add(TAI);
         contentPane.add(AUS);
         contentPane.add(IR);
+
+        
+        itineraryArea = new JTextArea();
+        itineraryArea.setBounds(900, 0, 300,457);
+        itineraryArea.setEditable(true);
+        itineraryArea.setForeground(Color.black);
+        itineraryArea.setBackground(Color.white);
+        contentPane.add(itineraryArea);
         
         contentPane.add(background);
+
 
         //So it stops the program once you close the windows
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
     }
-
 
     @Override
     public void mouseClicked(MouseEvent arg0) {
@@ -107,60 +123,126 @@ public class GUI extends JFrame implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent arg0) {
-        
+
     }
 
     @Override
     public void mouseReleased(MouseEvent event) {
 //        System.out.println("Clicked on a red pointer " + event.getComponent());
 
-        if(event.getComponent().toString().contains("text=New York")){
-            System.out.println("Selected New York airport.");
+        if (event.getSource() instanceof NavArrow) {
+
+            if (event.getComponent().toString().contains("text=New York")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 0;
+                System.out.println("Selected New York airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=France")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 1;
+                System.out.println("Selected France airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Afganistan")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 2;
+                System.out.println("Selected Afganistan airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Amsterdam")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 3;
+                System.out.println("Selected Amsterdam airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Chile")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 4;
+                System.out.println("Selected Chile airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Russia")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 5;
+                System.out.println("Selected Russia airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=China")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 6;
+                System.out.println("Selected China airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Marruecos")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 7;
+                System.out.println("Selected Marruecos airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Mexico")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 8;
+                System.out.println("Selected Mexico City airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Hawai")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 9;
+                System.out.println("Selected Hawai airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Emiratos Arabes")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 10;
+                System.out.println("Selected Emiratos Arabes airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Japan")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 11;
+                System.out.println("Selected Japan airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Thailand")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 12;
+                System.out.println("Selected Thailand airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Australia")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 13;
+                System.out.println("Selected Australia airport. " + selection + " " + locX + " " + locY);
+            }
+            if (event.getComponent().toString().contains("text=Ireland")) {
+                locX = event.getXOnScreen();
+                locY = event.getYOnScreen();
+                selection = 14;
+                System.out.println("Selected Ireland airport. " + selection + " " + locX + " " + locY + " " + event.getComponent());
+            }
+
+
+            if (firstTime) {
+                orCoordX = locX;
+                orCoordY = locY;
+                origin = selection;
+                firstTime = false;
+            } else {
+                desCoordX = locX;
+                desCoordY = locY;
+                destination = selection;
+                System.out.println(orCoordX + " " + orCoordY + " " + desCoordX + " " + desCoordY);
+                System.out.println("Origin: " + origin + " Destination: " + destination);
+                firstTime = true;
+            }
+
         }
-        if(event.getComponent().toString().contains("text=France")){
-            System.out.println("Selected France airport.");
-        }
-        if(event.getComponent().toString().contains("text=Afganistan")){
-            System.out.println("Selected Afganistan airport.");
-        }
-        if(event.getComponent().toString().contains("text=Amsterdam")){
-            System.out.println("Selected Amsterdam airport.");
-        }
-        if(event.getComponent().toString().contains("text=Chile")){
-            System.out.println("Selected Chile airport.");
-        }
-        if(event.getComponent().toString().contains("text=Russia")){
-            System.out.println("Selected Russia airport.");
-        }
-        if(event.getComponent().toString().contains("text=China")){
-            System.out.println("Selected China airport.");
-        }
-        if(event.getComponent().toString().contains("text=Marruecos")){
-            System.out.println("Selected Marruecos airport.");
-        }
-        if(event.getComponent().toString().contains("text=Mexico")){
-            System.out.println("Selected Mexico City airport.");
-        }
-        if(event.getComponent().toString().contains("text=Hawai")){
-            System.out.println("Selected Hawai airport.");
-        }
-        if(event.getComponent().toString().contains("text=Emiratos Arabes")){
-            System.out.println("Selected Emiratos Arabes airport.");
-        }
-        if(event.getComponent().toString().contains("text=Japan")){
-            System.out.println("Selected Japan airport.");
-        }
-        if(event.getComponent().toString().contains("text=Thailand")){
-            System.out.println("Selected Thailand airport.");
-        }
-        if(event.getComponent().toString().contains("text=Australia")){
-            System.out.println("Selected Australia airport.");
-        }
-        if(event.getComponent().toString().contains("text=Ireland")){
-            System.out.println("Selected Ireland airport.");
-        }
-        
     }
+
+  
+    
 
     @Override
     public void mouseEntered(MouseEvent arg0) {

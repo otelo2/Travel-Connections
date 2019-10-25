@@ -29,6 +29,7 @@ public class GUI extends JFrame implements MouseListener {
     int FRAME_Y_ORIGIN = 180;
 
     boolean firstTime = true;
+    boolean directFlight = true;
     int origin, destination;
     int locX, locY, orCoordX, orCoordY, desCoordX, desCoordY;
     int selection = 9999;
@@ -53,6 +54,7 @@ public class GUI extends JFrame implements MouseListener {
     Maat matrix;
     int price = 6942069;
     String itinerary;
+    int lineArr[][];
 
     GUI() throws IOException {
         Container contentPane;
@@ -144,7 +146,7 @@ public class GUI extends JFrame implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent event) {
 //        System.out.println("Clicked on a red pointer " + event.getComponent());
-selection=999;
+        selection = 999;
         if (event.getSource() instanceof NavArrow) {
 
             if (event.getComponent().toString().contains("text=New York")) {
@@ -255,23 +257,27 @@ selection=999;
                     price = matrix.BuscarD(origin, destination);
                     if (price == 0) {
                         System.out.println("Non-Direct flight");
+                        directFlight = false;
                         matrix.FindNemo(origin, destination, 0);
                         for (int i = 0; i < matrix.RoyalR; i++) {
                             System.out.println(matrix.Royalroute[i]);
                         }
                         itinerary = printItinerary(matrix.Royalroute, matrix.Royalprice, matrix.RoyalR);
                         itineraryArea.setText(itinerary);
-                        matrix.Fill();
+                        lineArr = coordinateArray(matrix.Royalroute, matrix.RoyalR);
+//                        matrix.Fill();
                     } else {
                         System.out.println("Direct flight");
+                        directFlight = true;
                         itinerary = printItinerary(price);
                         itineraryArea.setText(itinerary);
                     }
                     firstTime = true;
-                    
+
                     repaint();
                 } else {
                     System.out.println("Origin and destination are the same");
+                    itineraryArea.setText("Same origin and destination!");
                 }
 
             }
@@ -337,17 +343,17 @@ selection=999;
 
             }
         }
-        itin = itin + "Price: " + price + System.lineSeparator();
+        itin = itin + "Price: $" + price + System.lineSeparator();
+        itin = itin + "Return route is the same" + System.lineSeparator() + System.lineSeparator();
+        itin = itin + "Final price: $" + price*2 + System.lineSeparator();
         return itin;
     }
 
+    //Prints the itinerary of a direct flight and returns a string of the result.
     public String printItinerary(int price) {
         String itin = "";
-        int size = 2;
-//Pasa lo que regresa la funcion de búsqueda a un vector temporal para poder manejarlo
-//       temp = search(origin,destination);
         int temp[] = new int[2];
-        //Código de prueba
+        //Assign the airport numbers to the array
         temp[0] = origin;
         temp[1] = destination;
 
@@ -406,14 +412,16 @@ selection=999;
 
             }
         }
-        itin = itin + "Price: " + price + System.lineSeparator();
+        itin = itin + "Price: $" + price + System.lineSeparator();
+        itin = itin + "Return route is the same" + System.lineSeparator() + System.lineSeparator();
+        itin = itin + "Final price: $" + price*2 + System.lineSeparator();
         return itin;
     }
 
-    //Add the lines to create the itinerary "Table"
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        //Add the lines to create the itinerary "Table"
         //Vertical lines
         g.drawLine(900, 380, 900, 112);
         g.drawLine(1100, 380, 1100, 112);
@@ -422,25 +430,112 @@ selection=999;
         g.drawLine(900, 380, 1100, 380);
         g.drawLine(1100, 112, 900, 112);
 
-//        g.drawLine(194, 371, 110, 204);
-        int xconst = 20;
-        int yconst = 40;
-//        g.drawLine(173 + xconst, 335 + yconst, 90 + xconst, 160 + yconst);
-        g.drawLine(desCoordX + xconst, desCoordY + yconst, orCoordX + xconst, orCoordY + yconst);
-//        g.drawLine(desCoordX, desCoordY, orCoordX, orCoordY);
-        System.out.println(desCoordX + " " + desCoordY + " " + orCoordX + " " + orCoordY);
-    }
-
-    void numberOfLines(int[] vec) {
-
-        for (int i = 0; i < vec.length; i++) {
-
+        //Draw the lines from and to each selected airport
+        int xOffset = 20;
+        int yOffset = 40;
+        if (directFlight) {
+            g.drawLine(desCoordX + xOffset, desCoordY + yOffset, orCoordX + xOffset, orCoordY + yOffset);
+        } else {
+            for (int i = 0; i < matrix.RoyalR - 1; i++) {
+                g.drawLine(lineArr[i + 1][i + 1] + xOffset, lineArr[i + 1][i + 2] + yOffset, lineArr[i][i] + xOffset, lineArr[i][i + 1] + yOffset);
+//                System.out.println("x2: " + lineArr[i + 1][i + 1] + " " + "y2: " + lineArr[i + 1][i + 2] + " " + "x1: " + lineArr[i][i] + " " + "y1: " + lineArr[i][i + 1]);
+            }
         }
-
+//        System.out.println(desCoordX + " " + desCoordY + " " + orCoordX + " " + orCoordY);
     }
 
-    void coordintateArray(int[] vec) {
+    //This method finds the coordinate for each and every airport and puts it in a matrix
+    //For use with the drawLine methoid in paint.
+    int[][] coordinateArray(int[] vec, int size) {
+        int[][] coords = new int[size + 1][size + 1];
+        int i, j;
+        i = j = 0;
+        while (i < size) {
+            switch (vec[i]) {
+                case 0:
+                    coords[i][i] = NY.xCoord;
+                    coords[i][i + 1] = NY.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 1:
+                    coords[i][i] = FR.xCoord;
+                    coords[i][i + 1] = FR.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
 
+                    break;
+                case 2:
+                    coords[i][i] = AF.xCoord;
+                    coords[i][i + 1] = AF.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+
+                    break;
+                case 3:
+                    coords[i][i] = AMS.xCoord;
+                    coords[i][i + 1] = AMS.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 4:
+                    coords[i][i] = CHL.xCoord;
+                    coords[i][i + 1] = CHL.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 5:
+                    coords[i][i] = RU.xCoord;
+                    coords[i][i + 1] = RU.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 6:
+                    coords[i][i] = CHI.xCoord;
+                    coords[i][i + 1] = CHI.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 7:
+                    coords[i][i] = MAR.xCoord;
+                    coords[i][i + 1] = MAR.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 8:
+                    coords[i][i] = MX.xCoord;
+                    coords[i][i + 1] = MX.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 9:
+                    coords[i][i] = HAW.xCoord;
+                    coords[i][i + 1] = HAW.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 10:
+                    coords[i][i] = EA.xCoord;
+                    coords[i][i + 1] = EA.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 11:
+                    coords[i][i] = JP.xCoord;
+                    coords[i][i + 1] = JP.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 12:
+                    coords[i][i] = TAI.xCoord;
+                    coords[i][i + 1] = TAI.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 13:
+                    coords[i][i] = AUS.xCoord;
+                    coords[i][i + 1] = AUS.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                case 14:
+                    coords[i][j] = IR.xCoord;
+                    coords[i][i + 1] = IR.yCoord;
+                    System.out.println(coords[i][i] + " " + coords[i][i + 1]);
+                    break;
+                default:
+                    System.out.println("whoops");
+                    break;
+            }
+            i++;
+        }
+        return coords;
     }
 
     @Override

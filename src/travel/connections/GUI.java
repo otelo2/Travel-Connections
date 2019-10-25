@@ -144,7 +144,7 @@ public class GUI extends JFrame implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent event) {
 //        System.out.println("Clicked on a red pointer " + event.getComponent());
-
+selection=999;
         if (event.getSource() instanceof NavArrow) {
 
             if (event.getComponent().toString().contains("text=New York")) {
@@ -251,20 +251,29 @@ public class GUI extends JFrame implements MouseListener {
 //                itinerary = printItinerary();
 //                itineraryArea.setText(itinerary);
 //                repaint();
-                price = matrix.BuscarD(origin, destination);
-                if (price == 0) {
-                    System.out.println("Non-Direct flight");
-                    matrix.FindNemo(origin, destination, 0);
-                    price = matrix.Royalprice;
-                    itinerary = printItinerary(matrix.Royalroute, price, matrix.RoyalR);
-                    itineraryArea.setText(itinerary);
+                if (origin != destination) {
+                    price = matrix.BuscarD(origin, destination);
+                    if (price == 0) {
+                        System.out.println("Non-Direct flight");
+                        matrix.FindNemo(origin, destination, 0);
+                        for (int i = 0; i < matrix.RoyalR; i++) {
+                            System.out.println(matrix.Royalroute[i]);
+                        }
+                        itinerary = printItinerary(matrix.Royalroute, matrix.Royalprice, matrix.RoyalR);
+                        itineraryArea.setText(itinerary);
+                        matrix.Fill();
+                    } else {
+                        System.out.println("Direct flight");
+                        itinerary = printItinerary(price);
+                        itineraryArea.setText(itinerary);
+                    }
+                    firstTime = true;
+                    
+                    repaint();
                 } else {
-                    System.out.println("Direct flight");
-                    itinerary = printItinerary(price);
-                    itineraryArea.setText(itinerary);
+                    System.out.println("Origin and destination are the same");
                 }
-                firstTime = true;
-                repaint();
+
             }
 
         }

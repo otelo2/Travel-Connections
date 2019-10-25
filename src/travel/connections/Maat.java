@@ -93,15 +93,19 @@ public class Maat {
         }
     }
 
-    int BuscarD(int here, int there) {
+    int BuscarD(int here, int there)
+    {
+        Royalprice=50000;
         int j;
-        j = 0;
+        j=0;        
         int price=0;
-        if (maat[here][there] != 0) {
-            price = maat[here][there];
-        } 
+        if(maat[here][there]!=0)
+        {
+            price=maat[here][there];
+        }                            
         return price;
     }
+
 
     void FindNemo(int here, int there, int r) {
         route[r] = here;
@@ -124,7 +128,7 @@ public class Maat {
                         for (int e = 0; e < r; e++) {
                             price = price + maat[route[e]][route[e + 1]];
                         }
-                        System.out.println(price);
+//                        System.out.println(price);
                         if (price < Royalprice) {
                             Royalprice = price;
                             RoyalR = r + 1;

@@ -32,6 +32,10 @@ public class GUI extends JFrame implements MouseListener {
     int origin, destination;
     int locX, locY, orCoordX, orCoordY, desCoordX, desCoordY;
     int selection = 9999;
+    
+    JTextArea itineraryArea;
+    
+    String itinerary;
 
     GUI() throws IOException {
         Container contentPane;
@@ -43,7 +47,7 @@ public class GUI extends JFrame implements MouseListener {
 
         contentPane = getContentPane();
         contentPane.setLayout(null);
-        contentPane.setBackground(Color.black);
+        contentPane.setBackground(Color.white);
 
         //Adds the map background image
         BufferedImage img = ImageIO.read(new File("map.jpg"));
@@ -51,8 +55,6 @@ public class GUI extends JFrame implements MouseListener {
         background.setBounds(0, 0, 900, 447);
         background.setOpaque(false);
         contentPane.add(background);
-        
-        JTextArea itineraryArea;
 
         //Adds the red pointer
         NavArrow NY = new NavArrow("New York", 170, 95);
@@ -101,16 +103,19 @@ public class GUI extends JFrame implements MouseListener {
         contentPane.add(AUS);
         contentPane.add(IR);
 
-        
+        JLabel itLogo = new JLabel();
+        itLogo.setText("Itinerary:");
+        itLogo.setBounds(900, 0, 80, 80);
+        contentPane.add(itLogo);
+
         itineraryArea = new JTextArea();
-        itineraryArea.setBounds(900, 0, 300,457);
+        itineraryArea.setBounds(900, 80, 300, 457);
         itineraryArea.setEditable(true);
         itineraryArea.setForeground(Color.black);
         itineraryArea.setBackground(Color.white);
         contentPane.add(itineraryArea);
-        
-        contentPane.add(background);
 
+        contentPane.add(background);
 
         //So it stops the program once you close the windows
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -223,7 +228,6 @@ public class GUI extends JFrame implements MouseListener {
                 System.out.println("Selected Ireland airport. " + selection + " " + locX + " " + locY + " " + event.getComponent());
             }
 
-
             if (firstTime) {
                 orCoordX = locX;
                 orCoordY = locY;
@@ -236,13 +240,84 @@ public class GUI extends JFrame implements MouseListener {
                 System.out.println(orCoordX + " " + orCoordY + " " + desCoordX + " " + desCoordY);
                 System.out.println("Origin: " + origin + " Destination: " + destination);
                 firstTime = true;
+                itinerary=printItinerary();
+                itineraryArea.setText(itinerary);
+                
             }
 
         }
     }
 
-  
-    
+    public String printItinerary() {
+        String itin = "";
+        int size = 15;
+//Pasa lo que regresa la funcion de búsqueda a un vector temporal para poder manejarlo
+//       temp = search(origin,destination);
+        int temp[] = new int[15];
+        //Código de prueba
+        for (int i = 0; i < 15; i++) {
+            temp[i] = i;
+        }
+        temp[0]=origin;
+        temp[1]=destination;
+
+        //Le da el nombre del aeropuerto a cada número de aeropuerto
+        //Posteriormente añade todo a la string que el método regresa.
+        for (int i = 0; i < 15; i++) {
+            switch (temp[i]) {
+                case 0:
+                    itin = itin + "New York " + System.lineSeparator();
+                    break;
+                case 1:
+                    itin = itin + "France " + System.lineSeparator();
+                    break;
+                case 2:
+                    itin = itin + "Afganistan " + System.lineSeparator();
+                    break;
+                case 3:
+                    itin = itin + "Amsterdam " + System.lineSeparator();
+                    break;
+                case 4:
+                    itin = itin + "Chile " + System.lineSeparator();
+                    break;
+                case 5:
+                    itin = itin + "Russia " + System.lineSeparator();
+                    break;
+                case 6:
+                    itin = itin + "China " + System.lineSeparator();
+                    break;
+                case 7:
+                    itin = itin + "Marruecos " + System.lineSeparator();
+                    break;
+                case 8:
+                    itin = itin + "Mexico " + System.lineSeparator();
+                    break;
+                case 9:
+                    itin = itin + "Hawai " + System.lineSeparator();
+                    break;
+                case 10:
+                    itin = itin + "Emiratos Arabes " + System.lineSeparator();
+                    break;
+                case 11:
+                    itin = itin + "Japan " + System.lineSeparator();
+                    break;
+                case 12:
+                    itin = itin + "Thailand " + System.lineSeparator();
+                    break;
+                case 13:
+                    itin = itin + "Australia " + System.lineSeparator();
+                    break;
+                case 14:
+                    itin = itin + "Ireland " + System.lineSeparator();
+                    break;
+                default:
+                    itin = "OH NO";
+                    break;
+
+            }
+        }
+        return itin;
+    }
 
     @Override
     public void mouseEntered(MouseEvent arg0) {

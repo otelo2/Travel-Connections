@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 public class NavArrow extends JLabel {
      int pointerWidth=20;
      int pointerHeight=30;
+     public int xCoord, yCoord;
      
      NavArrow(String name, int posx, int posy){
         try {
@@ -31,5 +32,7 @@ public class NavArrow extends JLabel {
         setText(name);
         setOpaque(false);
         setBounds(posx,posy,pointerWidth,pointerHeight);
+        xCoord=posx;
+        yCoord=posy;
      }
 }
